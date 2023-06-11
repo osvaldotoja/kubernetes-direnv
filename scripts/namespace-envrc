@@ -1,0 +1,13 @@
+# shellcheck disable=SC2148
+set -u
+source_up
+
+NAMESPACE="$(basename "$(pwd)")"
+export NAMESPACE
+
+if [ -f ".env" ]; then
+ dotenv
+fi
+
+# https://direnv.net/man/direnv-stdlib.1.html#codehas-ltcommandgtcode
+kubectl config set-context --current --namespace="$NAMESPACE"

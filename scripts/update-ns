@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eu
+
+for ns in $(kubectl get ns -o name | cut -f2 -d\/); do
+  [[ -d "${ns}" ]] && continue
+  mkdir -p "${ns}"
+  ln -s ../../../scripts/namespace-envrc "${ns}/.envrc"
+  pushd "${ns}" >/dev/null 2>&1
+  direnv allow  >/dev/null 2>&1
+  popd >/dev/null 2>&1
+  echo "namespace created and allowed: ${ns}"
+done
+

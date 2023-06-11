@@ -1,0 +1,11 @@
+# shellcheck disable=SC2148
+export DIRENV_LOG_FORMAT=
+source_up
+
+CLUSTER_NAME="$(basename "${PWD}")"
+export CLUSTER_NAME
+
+KUBECONFIG="$HOME/.kube/config.${CLUSTER_NAME}.yml"
+export KUBECONFIG
+
+kubectl get nodes >/dev/null 2>&1 || aws eks update-kubeconfig --region "$AWS_DEFAULT_REGION" --name "$CLUSTER_NAME" --kubeconfig "$KUBECONFIG"

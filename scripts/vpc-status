@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -e
+
+# echo "CLUSTER_NAME: $CLUSTER_NAME"
+function vpc_status() {
+  VPCID=$(aws eks describe-cluster --name "${CLUSTER_NAME}" | jq -r '.cluster.resourcesVpcConfig.vpcId')
+  # echo "VPCID: $VPCID"
+  aws ec2 describe-subnets --filters "Name=vpc-id,Values=${VPCID}" | jq '.Subnets[] | .SubnetId + " = " + "\(.AvailableIpAddressCount)"'
+}
+
+vpc_status
+
+
+for AWS_REGION in us-east-3 us-east-2; do
+  mkdir "${AWS_REGION}"
+  cat <<'_EOF_' >"${AWS_REGION}/.envrc"
+source_up
+
+AWS_DEFAULT_REGION="$(basename "$(pwd)")"
+export AWS_DEFAULT_REGION
+_EOF_
+  # uncomment this to store regions in git
+  printf '!/%s/\n' "${AWS_REGION}" >> .gitignore
+  printf '/*\n/*/\n!/.envrc\n!.gitignore\n' > "${AWS_REGION}"/.gitignore
+done

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eu
+
+watch -n 1 "kubectl get pods && kubectl get deploy,svc,pvc,pv"

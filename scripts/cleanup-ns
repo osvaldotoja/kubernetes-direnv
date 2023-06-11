@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Cleanup testing environments
+# 1. removes namespace
+# 2. removes terraform remote state
+
+set -e
+
+export DIRENV_LOG_FORMAT=
+
+
+function usage() {
+	echo "Usage: <script> <namespace>"
+}
+
+cleanup_ns="$1"
+
+if [ $# -eq 1 ] ; then
+	echo "cleaning up ${cleanup_ns} ...."
+	kubectl delete namespace "${cleanup_ns}"
+	echo "namespace ${cleanup_ns} deleted, removing remote state file ...."
+	aws s3 rm "s3://terraform-testing-tfstate/env:/${cleanup_ns}/testing-env/state.tfstate"
+else
+	usage
+	exit 1
+fi
+
+

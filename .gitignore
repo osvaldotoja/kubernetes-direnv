@@ -1,0 +1,10 @@
+# Ignore everything
+/*
+/*/
+
+# But not these files...
+!.gitignore
+!/.envrc
+!README.md
+!/scripts/
+!/us-east-1/
